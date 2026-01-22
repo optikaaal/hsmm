@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useToast } from './ui/Toast';
+import { useToast } from '../hooks/useToast';
 import ConfirmDialog from './ui/ConfirmDialog';
 import StatusPill from './ui/StatusPill';
 import Badge from './ui/Badge';
@@ -125,7 +125,7 @@ export default function InstalledMods() {
       showToast(`${promises.length} mod(s) enabled`, 'success');
       await loadMods();
       setSelectedMods(new Set());
-    } catch (err) {
+    } catch {
       showToast('Failed to enable some mods', 'error');
     }
   };
@@ -148,7 +148,7 @@ export default function InstalledMods() {
       showToast(`${promises.length} mod(s) disabled`, 'info');
       await loadMods();
       setSelectedMods(new Set());
-    } catch (err) {
+    } catch {
       showToast('Failed to disable some mods', 'error');
     }
   };
@@ -165,7 +165,7 @@ export default function InstalledMods() {
       showToast(`${promises.length} mod(s) removed`, 'success');
       await loadMods();
       setSelectedMods(new Set());
-    } catch (err) {
+    } catch {
       showToast('Failed to remove some mods', 'error');
     }
   };

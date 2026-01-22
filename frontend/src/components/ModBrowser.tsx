@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useToast } from './ui/Toast';
+import { useToast } from '../hooks/useToast';
 import Modal from './ui/Modal';
 import Badge from './ui/Badge';
 import StatusPill from './ui/StatusPill';
@@ -195,7 +195,7 @@ export default function ModBrowser() {
 
   // Sort and filter mods
   const getSortedMods = () => {
-    let sorted = [...mods];
+    const sorted = [...mods];
 
     switch (sortBy) {
       case 'newest':

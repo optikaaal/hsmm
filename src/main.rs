@@ -8,7 +8,9 @@ async fn main() -> Result<()> {
     // Check if --version or --help is requested (clap will handle these and exit)
     // Don't print banner for these special flags
     let args: Vec<String> = std::env::args().collect();
-    let is_version_or_help = args.iter().any(|arg| arg == "--version" || arg == "-V" || arg == "--help" || arg == "-h");
+    let is_version_or_help = args
+        .iter()
+        .any(|arg| arg == "--version" || arg == "-V" || arg == "--help" || arg == "-h");
 
     if !is_version_or_help {
         print_banner();

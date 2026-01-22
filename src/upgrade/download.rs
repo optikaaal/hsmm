@@ -61,7 +61,7 @@ pub async fn download_file(
 
     let mut stream = response
         .bytes_stream()
-        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e));
+        .map_err(std::io::Error::other);
 
     while let Some(chunk) = stream.next().await {
         let chunk = chunk.context("Failed to read download chunk")?;
