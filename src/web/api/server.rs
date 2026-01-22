@@ -90,3 +90,74 @@ pub async fn get_status() -> Result<Json<Value>, (StatusCode, String)> {
         "status": if running { "online" } else { "offline" }
     })))
 }
+
+pub async fn stop_server(
+    State(state): State<super::AppState>,
+) -> Result<Json<Value>, (StatusCode, String)> {
+    tracing::info!("Stopping Hytale server...");
+
+    // Create stop signal file for supervisor
+    let stop_signal = state.server_files_dir.join(".hsmm-stop");
+
+    match tokio::fs::write(&stop_signal, "").await {
+        Ok(_) => {
+            tracing::info!("Stop signal file created at {}", stop_signal.display());
+            Ok(Json(json!({
+                "success": true,
+                "message": "Server is stopping gracefully...",
+                "note": "Server will save and shut down. The container will keep running. Use /api/server/start to restart."
+            })))
+        }
+        Err(e) => {
+            tracing::error!("Failed to create stop signal: {}", e);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Failed to stop server: {}", e),
+            ))
+        }
+    }
+}
+
+pub async fn start_server(
+    State(state): State<super::AppState>,
+) -> Result<Json<Value>, (StatusCode, String)> {
+    // Check if server is already running
+    let status_check = tokio::process::Command::new("pgrep")
+        .arg("-f")
+        .arg("HytaleServer.jar")
+        .output()
+        .await;
+
+    if let Ok(output) = status_check {
+        if output.status.success() {
+            return Ok(Json(json!({
+                "success": false,
+                "message": "Server is already running",
+                "note": "Use /api/server/stop to stop it first, or /api/server/restart"
+            })));
+        }
+    }
+
+    tracing::info!("Starting Hytale server...");
+
+    // Create start signal file for supervisor
+    let start_signal = state.server_files_dir.join(".hsmm-start");
+
+    match tokio::fs::write(&start_signal, "").await {
+        Ok(_) => {
+            tracing::info!("Start signal file created at {}", start_signal.display());
+            Ok(Json(json!({
+                "success": true,
+                "message": "Server is starting...",
+                "note": "Server will be online in 1-2 minutes. Check status with /api/server/status"
+            })))
+        }
+        Err(e) => {
+            tracing::error!("Failed to create start signal: {}", e);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Failed to start server: {}", e),
+            ))
+        }
+    }
+}

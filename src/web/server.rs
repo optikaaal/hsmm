@@ -80,6 +80,8 @@ impl WebServer {
             .route("/config/:file", post(super::api::config::update_config))
             .route("/server/restart", post(super::api::server::restart_server))
             .route("/server/status", get(super::api::server::get_status))
+            .route("/server/stop", post(super::api::server::stop_server))
+            .route("/server/start", post(super::api::server::start_server))
             .route("/logs/hsmm", get(super::api::logs::get_hsmm_logs))
             .route("/logs/server", get(super::api::logs::get_server_logs))
             .route("/logs/webui", get(super::api::logs::get_webui_logs))

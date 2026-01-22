@@ -21,6 +21,7 @@ server-files/
 *.log
 .env
 .env.*
+.hsmm-*
 
 # IDE
 .vscode/

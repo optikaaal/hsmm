@@ -74,6 +74,7 @@ pub fn add_mod(config: &mut Config, name: String, identifier: ModIdentifier) -> 
         name,
         identifier,
         enabled: true,
+        installed_file: None,
     });
 
     Ok(())
@@ -139,6 +140,7 @@ mod tests {
             name: "Test Mod".to_string(),
             identifier: ModIdentifier::project_id(123),
             enabled: true,
+            installed_file: None,
         });
 
         remove_mod(&mut config, "Test Mod").unwrap();

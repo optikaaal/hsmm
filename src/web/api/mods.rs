@@ -53,34 +53,139 @@ pub async fn list_mods(
         Err(_) => Vec::new(),
     };
 
-    let mod_infos: Vec<ModInfo> = config
-        .mods
-        .into_iter()
-        .map(|m| {
-            let project_id = match m.identifier {
-                crate::config::ModIdentifier::ProjectId { curseforge } => curseforge,
-                crate::config::ModIdentifier::ProjectSlug { .. } => 0,
-            };
+    // Get CurseForge client to fetch actual filenames
+    let api_key = std::env::var("CURSEFORGE_API_KEY").ok();
+    let cf_client = api_key.as_ref().map(furse::Furse::new);
 
-            // Check if mod is installed by looking for files with the mod name
-            let installed = installed_mods
-                .iter()
-                .any(|f| f.to_lowercase().contains(&m.name.to_lowercase()));
+    let game_id = config.game_id.unwrap_or(0);
 
-            let version = installed_mods
-                .iter()
-                .find(|f| f.to_lowercase().contains(&m.name.to_lowercase()))
-                .cloned();
+    let mut mod_infos = Vec::new();
 
-            ModInfo {
-                name: m.name,
-                enabled: m.enabled,
-                project_id,
-                installed,
-                version,
+    for m in config.mods {
+        let project_id = match m.identifier {
+            crate::config::ModIdentifier::ProjectId { curseforge } => curseforge,
+            crate::config::ModIdentifier::ProjectSlug { .. } => 0,
+        };
+
+        // Try to get the actual filename from CurseForge API
+        let expected_filename: Option<String> = if let Some(ref client) = cf_client {
+            if project_id > 0 {
+                // Fetch latest file for this mod
+                match client.get_mod_files(project_id).await {
+                    Ok(files) => {
+                        // Filter and find the latest file for this game
+                        let latest = files
+                            .into_iter()
+                            .filter(|f| f.game_id == game_id)
+                            .max_by_key(|f| f.file_date);
+
+                        latest.map(|f| f.file_name)
+                    }
+                    Err(_) => None,
+                }
+            } else {
+                None
             }
-        })
-        .collect();
+        } else {
+            None
+        };
+
+        // Check if mod is installed
+        let (installed, version) = {
+            // First try: use the stored filename from config (most reliable!)
+            if let Some(ref stored_filename) = m.installed_file {
+                let file_exists = installed_mods.iter().any(|f| f == stored_filename);
+                if file_exists {
+                    (true, Some(stored_filename.clone()))
+                } else {
+                    // File was removed manually, clear it by falling through
+                    (false, None)
+                }
+            } else {
+                // Second try: exact filename match from API
+                let exact_match = expected_filename
+                    .as_ref()
+                    .and_then(|filename| installed_mods.iter().find(|f| *f == filename).cloned());
+
+                if exact_match.is_some() {
+                    (true, exact_match)
+                } else {
+                    // Third try: fuzzy matching by mod name
+                    // Extract key words from mod name for matching
+                    let name_lower = m.name.to_lowercase();
+
+                    let version = installed_mods
+                        .iter()
+                        .find(|f| {
+                            let f_lower = f.to_lowercase();
+
+                            // Strategy 1: Normalize and check if mod name is in filename
+                            let f_normalized = f_lower
+                                .replace(&[' ', '-', '_', '.', '\''][..], "")
+                                .replace("macaws", "mcw")
+                                .replace("hytale", "hy");
+                            let name_normalized = name_lower
+                                .replace(&[' ', '-', '_', '.', '\''][..], "")
+                                .replace("macaw's", "mcw")
+                                .replace("hytale", "hy");
+
+                            if f_normalized.contains(&name_normalized)
+                                || name_normalized.contains(&f_normalized)
+                            {
+                                return true;
+                            }
+
+                            // Strategy 2: Check for acronyms (e.g., "Just Enough Tales" -> "JET")
+                            let acronym: String = name_lower
+                                .split_whitespace()
+                                .filter(|word| {
+                                    !["and", "the", "a", "an", "of", "for"].contains(word)
+                                })
+                                .filter_map(|word| word.chars().next())
+                                .collect();
+
+                            if acronym.len() >= 2 && f_lower.contains(&acronym) {
+                                return true;
+                            }
+
+                            // Strategy 3: Check individual significant words (3+ chars)
+                            let significant_words: Vec<_> = name_lower
+                                .split_whitespace()
+                                .filter(|word| {
+                                    word.len() >= 3 && !["and", "the", "mod"].contains(word)
+                                })
+                                .collect();
+
+                            if !significant_words.is_empty() {
+                                let matches = significant_words
+                                    .iter()
+                                    .filter(|word| f_lower.contains(*word))
+                                    .count();
+
+                                // If at least half the significant words match, consider it a match
+                                if matches >= significant_words.len().div_ceil(2) {
+                                    return true;
+                                }
+                            }
+
+                            false
+                        })
+                        .cloned();
+
+                    let installed = version.is_some();
+                    (installed, version)
+                }
+            }
+        };
+
+        mod_infos.push(ModInfo {
+            name: m.name,
+            enabled: m.enabled,
+            project_id,
+            installed,
+            version,
+        });
+    }
 
     Ok(Json(mod_infos))
 }
@@ -127,6 +232,7 @@ pub async fn add_mod(
         identifier: crate::config::ModIdentifier::ProjectId {
             curseforge: req.project_id,
         },
+        installed_file: None,
     });
 
     // Write back to config

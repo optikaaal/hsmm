@@ -8,6 +8,8 @@ interface ServerStatus {
 export default function ServerControl() {
   const [status, setStatus] = useState<ServerStatus | null>(null);
   const [restarting, setRestarting] = useState(false);
+  const [stopping, setStopping] = useState(false);
+  const [starting, setStarting] = useState(false);
 
   useEffect(() => {
     checkStatus();
@@ -48,6 +50,52 @@ export default function ServerControl() {
       alert(`Failed to restart: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setRestarting(false);
+    }
+  };
+
+  const stopServer = async () => {
+    if (!confirm('Are you sure you want to stop the Hytale server? You can start it again after making changes.')) return;
+
+    setStopping(true);
+    try {
+      const response = await fetch('/api/server/stop', {
+        method: 'POST',
+      });
+
+      if (!response.ok) throw new Error('Failed to stop server');
+
+      const data = await response.json();
+      alert(`${data.message}\n${data.note || ''}`);
+
+      // Check status after a delay
+      setTimeout(checkStatus, 2000);
+    } catch (err) {
+      alert(`Failed to stop: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    } finally {
+      setStopping(false);
+    }
+  };
+
+  const startServer = async () => {
+    if (!confirm('Start the Hytale server?')) return;
+
+    setStarting(true);
+    try {
+      const response = await fetch('/api/server/start', {
+        method: 'POST',
+      });
+
+      if (!response.ok) throw new Error('Failed to start server');
+
+      const data = await response.json();
+      alert(`${data.message}\n${data.note || ''}`);
+
+      // Check status after a delay
+      setTimeout(checkStatus, 3000);
+    } catch (err) {
+      alert(`Failed to start: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    } finally {
+      setStarting(false);
     }
   };
 
@@ -103,6 +151,26 @@ export default function ServerControl() {
         <h3 className="text-xl font-bold text-white mb-4">Server Actions</h3>
 
         <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <button
+              onClick={stopServer}
+              disabled={stopping || !status?.running}
+              className="px-6 py-4 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded-lg font-bold text-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <span>⏹</span>
+              <span>{stopping ? 'Stopping...' : 'Stop Server'}</span>
+            </button>
+
+            <button
+              onClick={startServer}
+              disabled={starting || status?.running}
+              className="px-6 py-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg font-bold text-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <span>▶</span>
+              <span>{starting ? 'Starting...' : 'Start Server'}</span>
+            </button>
+          </div>
+
           <button
             onClick={restartServer}
             disabled={restarting}
@@ -113,7 +181,11 @@ export default function ServerControl() {
           </button>
 
           <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 text-sm text-yellow-200">
-            <strong>⚠️ Warning:</strong> Restarting the server will disconnect all players. Make sure to save your progress first!
+            <strong>⚠️ Warning:</strong> Stopping or restarting the server will disconnect all players. Make sure to save your progress first!
+          </div>
+
+          <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4 text-sm text-blue-200">
+            <strong>💡 Tip:</strong> Stop the server to safely edit config files and download/update mods, then start it back up to apply changes without container restart.
           </div>
         </div>
       </div>
@@ -122,10 +194,12 @@ export default function ServerControl() {
       <div className="bg-white/5 border border-adventure-500/20 rounded-lg p-6">
         <h3 className="text-xl font-bold text-white mb-4">Information</h3>
         <div className="space-y-2 text-adventure-300 text-sm">
-          <p>• The server restart feature will stop and start the Hytale server process</p>
-          <p>• Any changes to mods or configuration will take effect after restart</p>
+          <p>• <strong className="text-white">Stop Server:</strong> Safely stop the server to edit configs or manage mods</p>
+          <p>• <strong className="text-white">Start Server:</strong> Start the stopped server with updated configurations</p>
+          <p>• <strong className="text-white">Restart Server:</strong> Quick restart that updates mods automatically</p>
+          <p>• Config files are read on startup, so stop the server before manual edits</p>
           <p>• The server status updates automatically every 5 seconds</p>
-          <p>• Make sure to enable/disable mods before restarting for changes to apply</p>
+          <p>• Make sure to enable/disable mods before starting for changes to apply</p>
         </div>
       </div>
     </div>

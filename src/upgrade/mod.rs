@@ -40,6 +40,9 @@ pub async fn upgrade_mods(config: &mut Config, mods_dir: &Path) -> Result<()> {
     let mut downloads = Vec::new();
     let mut current_files = Vec::new(); // Track all current files (downloaded + skipped)
 
+    // Track which mods got which files for config updates
+    let mut mod_to_file: Vec<(String, i32, String)> = Vec::new(); // (mod_name, project_id, filename)
+
     for mod_config in enabled_mods {
         match resolve_and_fetch_latest(&mod_config.name, &mod_config.identifier, game_id).await {
             Ok(metadata) => {
@@ -47,6 +50,13 @@ pub async fn upgrade_mods(config: &mut Config, mods_dir: &Path) -> Result<()> {
 
                 // Add to current files list regardless of whether we download or skip
                 current_files.push(metadata.file_name.clone());
+
+                // Track this mod->file mapping
+                mod_to_file.push((
+                    mod_config.name.clone(),
+                    metadata.project_id,
+                    metadata.file_name.clone(),
+                ));
 
                 // Skip download if file already exists
                 if output_path.exists() {
@@ -97,7 +107,20 @@ pub async fn upgrade_mods(config: &mut Config, mods_dir: &Path) -> Result<()> {
 
     for (i, result) in results.iter().enumerate() {
         match result {
-            Ok(_) => success_count += 1,
+            Ok(_) => {
+                success_count += 1;
+                // Update config with the installed filename
+                let filename = &downloads[i].0.file_name;
+                let project_id = downloads[i].0.project_id;
+                if let Some(mod_config) = config
+                    .mods
+                    .iter_mut()
+                    .find(|m| m.enabled && matches_mod(&m.identifier, project_id))
+                {
+                    mod_config.installed_file = Some(filename.clone());
+                    tracing::debug!("Updated config: {} -> {}", mod_config.name, filename);
+                }
+            }
             Err(e) => {
                 error_count += 1;
                 tracing::error!("Failed to download {}: {}", downloads[i].0.file_name, e);
@@ -111,12 +134,32 @@ pub async fn upgrade_mods(config: &mut Config, mods_dir: &Path) -> Result<()> {
         error_count
     );
 
+    // Update installed_file for ALL processed mods (both downloaded and already up-to-date)
+    for (mod_name, project_id, filename) in mod_to_file {
+        if let Some(mod_config) = config
+            .mods
+            .iter_mut()
+            .find(|m| m.name == mod_name || matches_mod(&m.identifier, project_id))
+        {
+            mod_config.installed_file = Some(filename.clone());
+            tracing::debug!("Tracked mod file: {} -> {}", mod_name, filename);
+        }
+    }
+
     // Clean up old versions (using current_files which includes both downloaded and skipped files)
     cleanup::cleanup_old_versions(mods_dir, &current_files, &config.settings).await?;
 
     tracing::info!("Mod upgrade complete!");
 
     Ok(())
+}
+
+/// Helper function to check if a mod identifier matches a project ID
+fn matches_mod(identifier: &ModIdentifier, project_id: i32) -> bool {
+    match identifier {
+        ModIdentifier::ProjectId { curseforge } => *curseforge == project_id,
+        _ => false,
+    }
 }
 
 /// Resolve a mod identifier to a project ID and fetch the latest file

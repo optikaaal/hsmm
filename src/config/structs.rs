@@ -28,6 +28,10 @@ pub struct Mod {
     /// Whether this mod is enabled
     #[serde(default = "default_true")]
     pub enabled: bool,
+
+    /// The actual filename of the installed mod file (if downloaded)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub installed_file: Option<String>,
 }
 
 fn default_true() -> bool {
