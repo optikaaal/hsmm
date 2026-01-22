@@ -2,8 +2,8 @@
 
 **Automatic mod management from CurseForge for your Hytale dedicated server.**
 
-[![CI](https://github.com/yourusername/hytale-server-mod-manager/workflows/CI/badge.svg)](https://github.com/yourusername/hytale-server-mod-manager/actions)
-[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/yourusername/hytale-server-mod-manager/pkgs/container/hytale-server-mod-manager)
+[![CI](https://github.com/optikaaal/hsmm/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/optikaaal/hsmm/actions/workflows/ci.yml)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/optikaaal/hsmm/pkgs/container/hsmm)
 [![Rust](https://img.shields.io/badge/rust-1.83%2B-orange.svg)](https://www.rust-lang.org/)
 [![CurseForge](https://img.shields.io/badge/CurseForge-Hytale-orange)](https://www.curseforge.com/hytale)
 
@@ -193,7 +193,7 @@ hsmm-web --config mods.toml --output mods --port 8080
 ```yaml
 services:
   hytale-server-modded:
-    image: ghcr.io/yourusername/hytale-server-mod-manager:latest
+    image: ghcr.io/optikaaal/hsmm:latest
     volumes:
       - ./server-files:/home/hytale/server-files
     ports:

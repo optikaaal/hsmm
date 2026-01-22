@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <Container version="2">
-  <Name>hytale-server-mod-manager</Name>
-  <Repository>ghcr.io/yourusername/hytale-server-mod-manager:latest</Repository>
+  <Name>hsmm</Name>
+  <Repository>ghcr.io/optikaaal/hsmm:latest</Repository>
   <Registry>https://ghcr.io</Registry>
   <Network>bridge</Network>
   <MyIP/>
   <Shell>bash</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/yourusername/hytale-server-mod-manager/issues</Support>
-  <Project>https://github.com/yourusername/hytale-server-mod-manager</Project>
+  <Support>https://github.com/optikaaal/hsmm/issues</Support>
+  <Project>https://github.com/optikaaal/hsmm</Project>
   <Overview>
     Hytale Server with automatic mod management from CurseForge.
 
@@ -23,8 +23,8 @@
   </Overview>
   <Category>GameServers:</Category>
   <WebUI>http://[IP]:[PORT:8080]</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/yourusername/hytale-server-mod-manager/master/unraid-template.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/yourusername/hytale-server-mod-manager/master/.github/icon.png</Icon>
+  <TemplateURL>https://raw.githubusercontent.com/optikaaal/hsmm/main/unraid-template.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/optikaaal/hsmm/main/.github/icon.png</Icon>
   <ExtraParams/>
   <PostArgs/>
   <CPUset/>

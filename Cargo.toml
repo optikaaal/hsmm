@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Hytale Server Mod Manager Contributors"]
 description = "Hytale Server Mod Manager - Automatic mod updates from CurseForge"
-repository = "https://github.com/yourusername/hytale-server-mod-manager"
+repository = "https://github.com/optikaaal/hsmm"
 keywords = ["hytale", "mod-manager", "curseforge", "server"]
 categories = ["games", "command-line-utilities"]
 
