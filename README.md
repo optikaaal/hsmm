@@ -143,38 +143,42 @@ hsmm --help
 
 The Web UI provides a complete management interface for your Hytale server mods.
 
-<img width="1784" height="1069" alt="image" src="https://github.com/user-attachments/assets/2ef8842f-94d7-414a-aaad-77e998c6a3bb" />
-<img width="1772" height="1067" alt="image" src="https://github.com/user-attachments/assets/8b84d176-7683-45c5-a533-a653e0e6b82a" />
-<img width="1783" height="1063" alt="image" src="https://github.com/user-attachments/assets/bcd87300-af3e-4205-8e3b-40af642bf283" />
-<img width="1773" height="1065" alt="image" src="https://github.com/user-attachments/assets/9cf995cd-1260-44b8-baa4-9585b680ee72" />
-<img width="1774" height="1066" alt="image" src="https://github.com/user-attachments/assets/91a9cc8e-390a-4b8a-8be7-ee5866b67fbb" />
-
 ### Features
 
 - **Browse Mods** - Search and discover mods from CurseForge
   - Filter by popularity, newest, alphabetical
   - View mod details, screenshots, and files
   - One-click installation
+ 
+<img width="1784" height="1069" alt="image" src="https://github.com/user-attachments/assets/2ef8842f-94d7-414a-aaad-77e998c6a3bb" />
 
 - **Installed Mods** - Manage your mod collection
   - Enable/disable mods
   - Bulk operations
   - View installation status and versions
+    
+<img width="1772" height="1067" alt="image" src="https://github.com/user-attachments/assets/8b84d176-7683-45c5-a533-a653e0e6b82a" />
 
 - **Server Control** - Manage your server
   - Restart server with mod updates
   - Check server status
   - One-click deployment
+    
+<img width="1773" height="1065" alt="image" src="https://github.com/user-attachments/assets/9cf995cd-1260-44b8-baa4-9585b680ee72" />
 
 - **Config Editor** - Edit server configuration files
   - config.json, permissions.json, bans.json, whitelist.json
   - JSON validation and pretty printing
+ 
+<img width="1783" height="1063" alt="image" src="https://github.com/user-attachments/assets/bcd87300-af3e-4205-8e3b-40af642bf283" />
 
 - **Log Viewer** - Monitor server activity
   - Server logs (latest.log)
   - Mod manager logs (mod-manager.log)
   - Web UI access logs (web-ui.log)
   - Auto-refresh support
+
+<img width="1774" height="1066" alt="image" src="https://github.com/user-attachments/assets/91a9cc8e-390a-4b8a-8be7-ee5866b67fbb" />
 
 ### Accessing the Web UI
 
