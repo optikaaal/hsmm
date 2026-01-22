@@ -1,0 +1,62 @@
+# Hytale Server Mod Manager Configuration
+# This file defines which mods to track and auto-update
+
+# CurseForge Game ID for Hytale (auto-detected, can be omitted)
+# Official Hytale game ID: 70216
+game_id = 70216
+
+# Mod Configuration
+# Add mods using their CurseForge project ID (from the mod's page)
+# Find the project ID by visiting: https://www.curseforge.com/hytale/mods/<mod-name>
+# The ID is in the "About Project" section
+
+# Real Hytale Mods (uncomment to use):
+
+# [[mods]]
+# name = "Advanced Item Info"
+# enabled = true
+# identifier = { curseforge = 1409811 }  # https://www.curseforge.com/hytale/mods/advanced-item-info
+
+# [[mods]]
+# name = "EyeSpy"
+# enabled = true
+# identifier = { curseforge = 1423494 }  # https://www.curseforge.com/hytale/mods/eyespy
+
+# [[mods]]
+# name = "BetterMap"
+# enabled = true
+# identifier = { curseforge = 1430352 }  # https://www.curseforge.com/hytale/mods/bettermap
+
+# Add your own mods:
+# [[mods]]
+# name = "Your Mod Name"
+# enabled = true
+# identifier = { curseforge = PROJECT_ID }
+
+# Disabled mod example:
+# [[mods]]
+# name = "Optional Mod"
+# enabled = false  # Won't be downloaded/updated
+# identifier = { curseforge = 1234567 }
+
+# Settings
+[settings]
+# Remove old mod versions after upgrade (default: true)
+# Set to false to keep old versions alongside new ones
+cleanup_old_versions = true
+
+# Archive old versions to .old/ directory instead of permanently deleting (default: true)
+# - true:  Old versions moved to .old/ directory (safer, keeps backups)
+# - false: Old versions permanently deleted (saves disk space)
+archive_old_versions = true
+
+# Maximum number of old versions to keep in .old/ (default: 3)
+# Only applies when archive_old_versions = true
+# Older backups beyond this limit are automatically deleted
+max_old_versions = 3
+
+# Download timeout in seconds (default: 5 minutes)
+download_timeout_secs = 300
+
+# Number of parallel downloads (default: 4)
+parallel_downloads = 4

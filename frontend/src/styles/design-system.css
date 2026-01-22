@@ -1,0 +1,194 @@
+/* Professional Design System for Hytale Server Mod Manager */
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #059669, #047857);
+  border-radius: 5px;
+  border: 2px solid rgba(30, 41, 59, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #10b981, #059669);
+}
+
+/* Card Styles */
+.card-base {
+  @apply bg-gradient-to-br from-stone-800/60 to-stone-900/60 backdrop-blur-sm;
+  @apply border border-stone-700/50;
+  @apply rounded-xl shadow-lg;
+  @apply transition-all duration-300;
+}
+
+.card-hover {
+  @apply hover:shadow-xl hover:shadow-adventure-900/20;
+  @apply hover:border-adventure-600/40;
+  @apply hover:-translate-y-0.5;
+}
+
+.card-interactive {
+  @apply card-base card-hover;
+  @apply cursor-pointer;
+}
+
+/* Button Styles */
+.btn-base {
+  @apply px-4 py-2.5 rounded-lg font-medium;
+  @apply transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-stone-900;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center gap-2;
+}
+
+.btn-primary {
+  @apply btn-base;
+  @apply bg-gradient-to-r from-adventure-600 to-adventure-700;
+  @apply text-white font-semibold;
+  @apply shadow-md shadow-adventure-900/30;
+  @apply hover:from-adventure-500 hover:to-adventure-600;
+  @apply hover:shadow-lg hover:shadow-adventure-900/40;
+  @apply focus:ring-adventure-500;
+  @apply active:scale-95;
+}
+
+.btn-secondary {
+  @apply btn-base;
+  @apply bg-stone-700/50 border border-stone-600/50;
+  @apply text-stone-200;
+  @apply hover:bg-stone-600/50 hover:text-white;
+  @apply focus:ring-stone-500;
+}
+
+.btn-danger {
+  @apply btn-base;
+  @apply bg-gradient-to-r from-red-600 to-red-700;
+  @apply text-white font-semibold;
+  @apply shadow-md shadow-red-900/30;
+  @apply hover:from-red-500 hover:to-red-600;
+  @apply hover:shadow-lg hover:shadow-red-900/40;
+  @apply focus:ring-red-500;
+  @apply active:scale-95;
+}
+
+.btn-ghost {
+  @apply btn-base;
+  @apply bg-transparent border border-adventure-600/30;
+  @apply text-adventure-300;
+  @apply hover:bg-adventure-900/20 hover:text-adventure-200 hover:border-adventure-500/50;
+  @apply focus:ring-adventure-500;
+}
+
+/* Input Styles */
+.input-base {
+  @apply px-4 py-2.5 rounded-lg;
+  @apply bg-stone-800/50 border border-stone-600/50;
+  @apply text-white placeholder-stone-400;
+  @apply focus:outline-none focus:border-adventure-500 focus:ring-2 focus:ring-adventure-500/20;
+  @apply transition-all duration-200;
+}
+
+/* Badge Styles */
+.badge-base {
+  @apply inline-flex items-center gap-1.5;
+  @apply px-2.5 py-1 rounded-full;
+  @apply text-xs font-semibold;
+  @apply border;
+  @apply transition-colors duration-200;
+}
+
+/* Section Header */
+.section-header {
+  @apply text-2xl font-bold text-white mb-4;
+  @apply flex items-center gap-3;
+}
+
+.section-header::before {
+  content: '';
+  @apply block w-1 h-8 bg-gradient-to-b from-adventure-400 to-adventure-600 rounded-full;
+}
+
+/* Glass Morphism */
+.glass {
+  @apply backdrop-blur-md bg-white/5;
+  @apply border border-white/10;
+  @apply shadow-xl;
+}
+
+.glass-dark {
+  @apply backdrop-blur-md bg-black/20;
+  @apply border border-stone-700/30;
+  @apply shadow-xl shadow-black/20;
+}
+
+/* Status Indicators */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+  @apply animate-pulse;
+}
+
+.status-dot-success {
+  @apply status-dot bg-green-500;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+
+.status-dot-warning {
+  @apply status-dot bg-lava-500;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
+}
+
+.status-dot-info {
+  @apply status-dot bg-diamond-500;
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(100, 116, 139, 0.1) 0%,
+    rgba(100, 116, 139, 0.3) 50%,
+    rgba(100, 116, 139, 0.1) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Typography */
+.text-heading {
+  @apply text-white font-bold tracking-tight;
+}
+
+.text-body {
+  @apply text-stone-300 leading-relaxed;
+}
+
+.text-muted {
+  @apply text-stone-400 text-sm;
+}
+
+/* Dividers */
+.divider-vertical {
+  @apply h-full w-px bg-gradient-to-b from-transparent via-stone-600 to-transparent;
+}
+
+.divider-horizontal {
+  @apply w-full h-px bg-gradient-to-r from-transparent via-stone-600 to-transparent;
+}

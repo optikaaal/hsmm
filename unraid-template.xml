@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>hytale-server-mod-manager</Name>
+  <Repository>ghcr.io/yourusername/hytale-server-mod-manager:latest</Repository>
+  <Registry>https://ghcr.io</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/yourusername/hytale-server-mod-manager/issues</Support>
+  <Project>https://github.com/yourusername/hytale-server-mod-manager</Project>
+  <Overview>
+    Hytale Server with automatic mod management from CurseForge.
+
+    Features:
+    - Modern Web UI for mod management (port 8080)
+    - Automatic mod updates on server start
+    - Browse and install mods from CurseForge
+    - Server control, config editor, and log viewer
+    - Smart cleanup with version archiving
+
+    Default login: No authentication required (add reverse proxy with auth for production)
+  </Overview>
+  <Category>GameServers:</Category>
+  <WebUI>http://[IP]:[PORT:8080]</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/yourusername/hytale-server-mod-manager/master/unraid-template.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/yourusername/hytale-server-mod-manager/master/.github/icon.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled></DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="Web UI Port" Target="8080" Default="8080" Mode="tcp" Description="Port for Web UI access" Type="Port" Display="always" Required="true" Mask="false">8080</Config>
+  <Config Name="Game Port" Target="5520" Default="5520" Mode="udp" Description="Hytale server game port" Type="Port" Display="always" Required="true" Mask="false">5520</Config>
+  <Config Name="Server Files" Target="/home/hytale/server-files" Default="/mnt/user/appdata/hytale-server" Mode="rw" Description="Server files directory (includes mods, configs, logs)" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/hytale-server</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User ID for file permissions" Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group ID for file permissions" Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+  <Config Name="Server Name" Target="SERVER_NAME" Default="Hytale Server" Mode="" Description="Name of your Hytale server" Type="Variable" Display="always" Required="false" Mask="false">Hytale Server</Config>
+  <Config Name="Max Players" Target="MAX_PLAYERS" Default="20" Mode="" Description="Maximum number of players" Type="Variable" Display="always" Required="false" Mask="false">20</Config>
+  <Config Name="View Distance" Target="VIEW_DISTANCE" Default="12" Mode="" Description="Server view distance (chunks)" Type="Variable" Display="advanced" Required="false" Mask="false">12</Config>
+  <Config Name="Authentication Mode" Target="AUTH_MODE" Default="ENFORCE" Mode="" Description="Authentication mode: ENFORCE, RELAXED, or OFFLINE" Type="Variable" Display="advanced" Required="false" Mask="false">ENFORCE</Config>
+  <Config Name="Whitelist Enabled" Target="WHITELIST_ENABLED" Default="false" Mode="" Description="Enable whitelist" Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="Max Tick Time" Target="MAX_TICK_TIME" Default="60000" Mode="" Description="Maximum tick time in milliseconds" Type="Variable" Display="advanced" Required="false" Mask="false">60000</Config>
+  <Config Name="CurseForge API Key" Target="CURSEFORGE_API_KEY" Default="" Mode="" Description="Optional custom CurseForge API key" Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+</Container>

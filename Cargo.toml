@@ -1,0 +1,74 @@
+[package]
+name = "hsmm"
+version = "0.1.0"
+edition = "2021"
+authors = ["Hytale Server Mod Manager Contributors"]
+description = "Hytale Server Mod Manager - Automatic mod updates from CurseForge"
+repository = "https://github.com/yourusername/hytale-server-mod-manager"
+keywords = ["hytale", "mod-manager", "curseforge", "server"]
+categories = ["games", "command-line-utilities"]
+
+[[bin]]
+name = "hsmm"
+path = "src/main.rs"
+
+[[bin]]
+name = "hsmm-web"
+path = "src/bin/web.rs"
+
+[dependencies]
+# CurseForge API
+furse = "1.6"
+
+# HTTP client
+reqwest = { version = "0.12", features = ["json", "rustls-tls", "stream"], default-features = false }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# CLI
+clap = { version = "4", features = ["derive", "cargo"] }
+
+# Progress bars
+indicatif = "0.17"
+
+# File operations
+fs_extra = "1.3"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# URL handling
+url = { version = "2.5", features = ["serde"] }
+
+# Time utilities
+chrono = "0.4"
+
+# Async utilities
+futures-util = "0.3"
+
+# Web server
+axum = "0.7"
+tower = "0.4"
+tower-http = { version = "0.5", features = ["fs", "cors", "trace"] }
+mime_guess = "2.0"
+urlencoding = "2.1"
+
+[dev-dependencies]
+tempfile = "3.0"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

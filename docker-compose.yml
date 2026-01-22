@@ -1,0 +1,34 @@
+services:
+  hytale-server-modded:
+    build: .
+    container_name: hytale-server-modded
+    ports:
+      - "5520:5520/udp"    # Hytale server game port
+      - "8080:8080/tcp"    # Web UI for mod management
+    volumes:
+      - ./server-files:/home/hytale/server-files
+    environment:
+      # Mod manager settings
+      - CURSEFORGE_API_KEY=${CURSEFORGE_API_KEY:-}
+      - WEB_UI_PORT=8080
+      
+      # Hytale server settings (from indifferentbroccoli/hytale-server-docker)
+      - SERVER_NAME=${SERVER_NAME:-hytale-modded-server}
+      - DEFAULT_PORT=${DEFAULT_PORT:-5520}
+      - MAX_PLAYERS=${MAX_PLAYERS:-20}
+      - VIEW_DISTANCE=${VIEW_DISTANCE:-12}
+      - AUTH_MODE=${AUTH_MODE:-authenticated}
+      - ENABLE_BACKUPS=${ENABLE_BACKUPS:-false}
+      - BACKUP_FREQUENCY=${BACKUP_FREQUENCY:-30}
+      - DISABLE_SENTRY=${DISABLE_SENTRY:-true}
+      - USE_AOT_CACHE=${USE_AOT_CACHE:-true}
+      - ACCEPT_EARLY_PLUGINS=${ACCEPT_EARLY_PLUGINS:-false}
+      - MAX_MEMORY=${MAX_MEMORY:-8G}
+      - DOWNLOAD_ON_START=${DOWNLOAD_ON_START:-true}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "HytaleServer.jar"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5m
