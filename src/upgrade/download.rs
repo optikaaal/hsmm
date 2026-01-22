@@ -59,9 +59,7 @@ pub async fn download_file(
     use futures_util::StreamExt;
     use futures_util::TryStreamExt;
 
-    let mut stream = response
-        .bytes_stream()
-        .map_err(std::io::Error::other);
+    let mut stream = response.bytes_stream().map_err(std::io::Error::other);
 
     while let Some(chunk) = stream.next().await {
         let chunk = chunk.context("Failed to read download chunk")?;
