@@ -143,6 +143,12 @@ hsmm --help
 
 The Web UI provides a complete management interface for your Hytale server mods.
 
+<img width="1784" height="1069" alt="image" src="https://github.com/user-attachments/assets/2ef8842f-94d7-414a-aaad-77e998c6a3bb" />
+<img width="1772" height="1067" alt="image" src="https://github.com/user-attachments/assets/8b84d176-7683-45c5-a533-a653e0e6b82a" />
+<img width="1783" height="1063" alt="image" src="https://github.com/user-attachments/assets/bcd87300-af3e-4205-8e3b-40af642bf283" />
+<img width="1773" height="1065" alt="image" src="https://github.com/user-attachments/assets/9cf995cd-1260-44b8-baa4-9585b680ee72" />
+<img width="1774" height="1066" alt="image" src="https://github.com/user-attachments/assets/91a9cc8e-390a-4b8a-8be7-ee5866b67fbb" />
+
 ### Features
 
 - **Browse Mods** - Search and discover mods from CurseForge
