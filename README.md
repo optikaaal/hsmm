@@ -399,7 +399,7 @@ Contributions welcome! Please:
 ## 🙏 Credits
 
 - Built with [Rust](https://www.rust-lang.org/)
-- Uses [furse](https://github.com/EssiumLLC/furse) for CurseForge API
+- Uses [furse](https://github.com/gorilla-devs/furse) for CurseForge API
 - Inspired by [Ferium](https://github.com/gorilla-devs/ferium)
 - Made for the Hytale community
 
