@@ -41,14 +41,14 @@ Access the Web UI at `http://localhost:8080`
 **Option 1: Download Binary**
 ```bash
 # Download latest release
-wget https://github.com/yourusername/hytale-server-mod-manager/releases/latest/download/hsmm
+wget https://github.com/optikaaal/hytale-server-mod-manager/releases/latest/download/hsmm
 chmod +x hsmm
 sudo mv hsmm /usr/local/bin/
 ```
 
 **Option 2: Build from Source**
 ```bash
-git clone https://github.com/yourusername/hytale-server-mod-manager
+git clone https://github.com/optikaaal/hytale-server-mod-manager
 cd hytale-server-mod-manager
 cargo build --release
 sudo cp target/release/hsmm /usr/local/bin/
@@ -408,8 +408,8 @@ Contributions welcome! Please:
 ## 🔗 Links
 
 - **CurseForge Hytale Mods:** https://www.curseforge.com/hytale
-- **Issues:** https://github.com/yourusername/hytale-server-mod-manager/issues
-- **Releases:** https://github.com/yourusername/hytale-server-mod-manager/releases
+- **Issues:** https://github.com/optikaaal/hytale-server-mod-manager/issues
+- **Releases:** https://github.com/optikaaal/hytale-server-mod-manager/releases
 
 ---
 
