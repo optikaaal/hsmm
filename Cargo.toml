@@ -1,6 +1,6 @@
 [package]
 name = "hsmm"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Hytale Server Mod Manager Contributors"]
 description = "Hytale Server Mod Manager - Automatic mod updates from CurseForge"

@@ -74,7 +74,9 @@ pub async fn list_backups(
                                 let created_at = metadata
                                     .modified()
                                     .ok()
-                                    .and_then(|time| time.duration_since(std::time::UNIX_EPOCH).ok())
+                                    .and_then(|time| {
+                                        time.duration_since(std::time::UNIX_EPOCH).ok()
+                                    })
                                     .map(|duration| {
                                         chrono::DateTime::from_timestamp(
                                             duration.as_secs() as i64,
