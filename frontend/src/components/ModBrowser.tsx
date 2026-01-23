@@ -72,6 +72,7 @@ export default function ModBrowser() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [page, setPage] = useState(0);
   const [installing, setInstalling] = useState<number | null>(null);
   const [hideInstalled, setHideInstalled] = useState(false);
@@ -80,10 +81,25 @@ export default function ModBrowser() {
   const [modDetails, setModDetails] = useState<ModDetails | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
+  // Debounced search effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== searchQuery) {
+        setSearchQuery(searchInput);
+        setPage(0);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
   useEffect(() => {
     loadMods();
+  }, [page, searchQuery, hideInstalled]);
+
+  useEffect(() => {
     loadInstalledMods();
-  }, [page, searchQuery]);
+  }, []);
 
   const loadInstalledMods = async () => {
     try {
@@ -101,15 +117,24 @@ export default function ModBrowser() {
     setLoading(true);
     setError(null);
     try {
-      const url = searchQuery
-        ? `/api/curseforge/search?q=${encodeURIComponent(searchQuery)}&page=${page}`
-        : `/api/curseforge/popular?page=${page}`;
+      // When hiding installed mods, fetch extra pages to compensate for filtering
+      const pagesToFetch = hideInstalled ? 3 : 1;
+      const allMods: Mod[] = [];
 
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to load mods');
+      for (let i = 0; i < pagesToFetch; i++) {
+        const currentPage = page * pagesToFetch + i;
+        const url = searchQuery
+          ? `/api/curseforge/search?q=${encodeURIComponent(searchQuery)}&page=${currentPage}`
+          : `/api/curseforge/popular?page=${currentPage}`;
 
-      const data = await response.json();
-      setMods(data);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to load mods');
+
+        const data = await response.json();
+        allMods.push(...data);
+      }
+
+      setMods(allMods);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -219,8 +244,11 @@ export default function ModBrowser() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setPage(0);
-    loadMods();
+    // Immediately apply search without waiting for debounce
+    if (searchInput !== searchQuery) {
+      setSearchQuery(searchInput);
+      setPage(0);
+    }
   };
 
   // Helper to format file size
@@ -245,23 +273,31 @@ export default function ModBrowser() {
       <div className="sticky top-[140px] z-40 -mx-6 -mt-6 px-6 pt-6 pb-4 bg-black/40 backdrop-blur-md border-b border-adventure-500/20">
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="flex gap-3 mb-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search mods..."
-            className="flex-1 px-4 py-2.5 bg-white/10 border border-adventure-500/30 rounded-lg text-white placeholder-adventure-300/50 focus:outline-none focus:border-adventure-400 focus:ring-2 focus:ring-adventure-400/20 transition-all"
-          />
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search mods... (live search)"
+              className="w-full px-4 py-2.5 bg-white/10 border border-adventure-500/30 rounded-lg text-white placeholder-adventure-300/50 focus:outline-none focus:border-adventure-400 focus:ring-2 focus:ring-adventure-400/20 transition-all"
+            />
+            {searchInput && searchInput !== searchQuery && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="w-4 h-4 border-2 border-adventure-500/30 border-t-adventure-500 rounded-full animate-spin"></div>
+              </div>
+            )}
+          </div>
           <button
             type="submit"
             className="px-6 py-2.5 bg-adventure-600 hover:bg-adventure-700 text-white rounded-lg font-medium transition-colors shadow-lg shadow-adventure-500/30"
           >
             🔍 Search
           </button>
-          {searchQuery && (
+          {(searchQuery || searchInput) && (
             <button
               type="button"
               onClick={() => {
+                setSearchInput('');
                 setSearchQuery('');
                 setPage(0);
               }}
@@ -279,7 +315,10 @@ export default function ModBrowser() {
             <input
               type="checkbox"
               checked={hideInstalled}
-              onChange={(e) => setHideInstalled(e.target.checked)}
+              onChange={(e) => {
+                setHideInstalled(e.target.checked);
+                setPage(0);
+              }}
               className="w-4 h-4 rounded border-adventure-500/30 bg-white/10 text-adventure-600 focus:ring-adventure-500 cursor-pointer"
             />
             <span className="text-sm font-medium">Hide installed mods</span>
