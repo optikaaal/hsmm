@@ -43,6 +43,14 @@ pub async fn upgrade_mods(config: &mut Config, mods_dir: &Path) -> Result<()> {
     // Track which mods got which files for config updates
     let mut mod_to_file: Vec<(String, i32, String)> = Vec::new(); // (mod_name, project_id, filename)
 
+    // Also track disabled mod files to prevent cleanup from removing them
+    for mod_config in config.mods.iter().filter(|m| !m.enabled) {
+        if let Some(ref filename) = mod_config.installed_file {
+            current_files.push(filename.clone());
+            tracing::debug!("Preserving disabled mod file: {}", filename);
+        }
+    }
+
     for mod_config in enabled_mods {
         match resolve_and_fetch_latest(&mod_config.name, &mod_config.identifier, game_id).await {
             Ok(metadata) => {

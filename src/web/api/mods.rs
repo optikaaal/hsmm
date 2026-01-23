@@ -289,7 +289,54 @@ pub async fn toggle_mod(
 
     match mod_found {
         Some(m) => {
+            let old_enabled = m.enabled;
             m.enabled = req.enabled;
+
+            // Move the mod file between mods/ and mods/.disabled/
+            if let Some(ref filename) = m.installed_file {
+                let source_dir = if old_enabled {
+                    state.mods_dir.clone()
+                } else {
+                    state.mods_dir.join(".disabled")
+                };
+                let dest_dir = if req.enabled {
+                    state.mods_dir.clone()
+                } else {
+                    state.mods_dir.join(".disabled")
+                };
+
+                let source_path = source_dir.join(filename);
+                let dest_path = dest_dir.join(filename);
+
+                // Only move if source file exists
+                if source_path.exists() {
+                    // Create .disabled directory if needed
+                    if !dest_dir.exists() {
+                        tokio::fs::create_dir_all(&dest_dir).await.map_err(|e| {
+                            (
+                                StatusCode::INTERNAL_SERVER_ERROR,
+                                format!("Failed to create disabled directory: {}", e),
+                            )
+                        })?;
+                    }
+
+                    // Move the file
+                    tokio::fs::rename(&source_path, &dest_path)
+                        .await
+                        .map_err(|e| {
+                            (
+                                StatusCode::INTERNAL_SERVER_ERROR,
+                                format!("Failed to move mod file: {}", e),
+                            )
+                        })?;
+
+                    tracing::info!(
+                        "Moved mod file: {} -> {}",
+                        source_path.display(),
+                        dest_path.display()
+                    );
+                }
+            }
 
             let new_content = toml::to_string_pretty(&config).map_err(|e| {
                 (
@@ -335,6 +382,33 @@ pub async fn remove_mod(
             format!("Failed to parse config: {}", e),
         )
     })?;
+
+    // Find the mod and delete its file before removing from config
+    if let Some(mod_to_remove) = config.mods.iter().find(|m| m.name == name) {
+        if let Some(ref filename) = mod_to_remove.installed_file {
+            // Check both mods/ and mods/.disabled/ directories
+            let enabled_path = state.mods_dir.join(filename);
+            let disabled_path = state.mods_dir.join(".disabled").join(filename);
+
+            if enabled_path.exists() {
+                tokio::fs::remove_file(&enabled_path).await.map_err(|e| {
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to delete mod file: {}", e),
+                    )
+                })?;
+                tracing::info!("Deleted mod file: {}", enabled_path.display());
+            } else if disabled_path.exists() {
+                tokio::fs::remove_file(&disabled_path).await.map_err(|e| {
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to delete mod file: {}", e),
+                    )
+                })?;
+                tracing::info!("Deleted mod file: {}", disabled_path.display());
+            }
+        }
+    }
 
     let initial_len = config.mods.len();
     config.mods.retain(|m| m.name != name);
