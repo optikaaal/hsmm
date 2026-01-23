@@ -118,6 +118,9 @@ jobs:
           - os: macos-latest
             target: aarch64-apple-darwin
             artifact_name: hsmm-macos-arm64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact_name: hsmm-windows-amd64
 
     steps:
       - uses: actions/checkout@v4
@@ -134,7 +137,8 @@ jobs:
       - name: Build
         run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Prepare artifacts
+      - name: Prepare artifacts (Unix)
+        if: runner.os != 'Windows'
         run: |
           mkdir -p artifacts
           cp target/${{ matrix.target }}/release/hsmm artifacts/${{ matrix.artifact_name }}
@@ -142,7 +146,24 @@ jobs:
           cd artifacts
           tar czf ${{ matrix.artifact_name }}.tar.gz ${{ matrix.artifact_name }} ${{ matrix.artifact_name }}-web
 
-      - name: Upload Release Assets
+      - name: Prepare artifacts (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts
+          Copy-Item target/${{ matrix.target }}/release/hsmm.exe artifacts/${{ matrix.artifact_name }}.exe
+          Copy-Item target/${{ matrix.target }}/release/hsmm-web.exe artifacts/${{ matrix.artifact_name }}-web.exe
+          cd artifacts
+          Compress-Archive -Path ${{ matrix.artifact_name }}.exe,${{ matrix.artifact_name }}-web.exe -DestinationPath ${{ matrix.artifact_name }}.zip
+
+      - name: Upload Release Assets (Unix)
+        if: runner.os != 'Windows'
         uses: softprops/action-gh-release@v1
         with:
           files: ./artifacts/${{ matrix.artifact_name }}.tar.gz
+
+      - name: Upload Release Assets (Windows)
+        if: runner.os == 'Windows'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./artifacts/${{ matrix.artifact_name }}.zip
