@@ -38,23 +38,94 @@ Access the Web UI at `http://localhost:8080`
 
 ### Installation
 
-**Option 1: Download Binary**
+#### Option 1: Prebuilt Binaries (Easiest)
+
+Download the latest release for your platform from [Releases](https://github.com/optikaaal/hsmm/releases/latest):
+
+**Linux (x86_64):**
 ```bash
-# Download latest release
-wget https://github.com/optikaaal/hytale-server-mod-manager/releases/latest/download/hsmm
-chmod +x hsmm
-sudo mv hsmm /usr/local/bin/
+# Download and extract
+wget https://github.com/optikaaal/hsmm/releases/latest/download/hsmm-linux-amd64.tar.gz
+tar xzf hsmm-linux-amd64.tar.gz
+
+# Install to system
+sudo mv hsmm-linux-amd64 /usr/local/bin/hsmm
+sudo mv hsmm-linux-amd64-web /usr/local/bin/hsmm-web
+sudo chmod +x /usr/local/bin/hsmm /usr/local/bin/hsmm-web
+
+# Verify installation
+hsmm --version
 ```
 
-**Option 2: Build from Source**
+**Linux (static/musl - for Alpine or minimal systems):**
 ```bash
-git clone https://github.com/optikaaal/hytale-server-mod-manager
-cd hytale-server-mod-manager
+# Download and extract
+wget https://github.com/optikaaal/hsmm/releases/latest/download/hsmm-linux-amd64-static.tar.gz
+tar xzf hsmm-linux-amd64-static.tar.gz
+
+# Install and verify
+sudo mv hsmm-linux-amd64-static /usr/local/bin/hsmm
+sudo mv hsmm-linux-amd64-static-web /usr/local/bin/hsmm-web
+sudo chmod +x /usr/local/bin/hsmm /usr/local/bin/hsmm-web
+```
+
+**macOS (Intel):**
+```bash
+# Download and extract
+curl -L https://github.com/optikaaal/hsmm/releases/latest/download/hsmm-macos-amd64.tar.gz -o hsmm-macos-amd64.tar.gz
+tar xzf hsmm-macos-amd64.tar.gz
+
+# Install to system
+sudo mv hsmm-macos-amd64 /usr/local/bin/hsmm
+sudo mv hsmm-macos-amd64-web /usr/local/bin/hsmm-web
+sudo chmod +x /usr/local/bin/hsmm /usr/local/bin/hsmm-web
+
+# Verify installation
+hsmm --version
+```
+
+**macOS (Apple Silicon):**
+```bash
+# Download and extract
+curl -L https://github.com/optikaaal/hsmm/releases/latest/download/hsmm-macos-arm64.tar.gz -o hsmm-macos-arm64.tar.gz
+tar xzf hsmm-macos-arm64.tar.gz
+
+# Install to system
+sudo mv hsmm-macos-arm64 /usr/local/bin/hsmm
+sudo mv hsmm-macos-arm64-web /usr/local/bin/hsmm-web
+sudo chmod +x /usr/local/bin/hsmm /usr/local/bin/hsmm-web
+
+# Verify installation
+hsmm --version
+```
+
+**Windows:**
+```powershell
+# Download from releases page or use PowerShell:
+Invoke-WebRequest -Uri "https://github.com/optikaaal/hsmm/releases/latest/download/hsmm-windows-amd64.zip" -OutFile "hsmm-windows-amd64.zip"
+
+# Extract the zip file
+Expand-Archive -Path hsmm-windows-amd64.zip -DestinationPath .
+
+# The binaries are now available as hsmm-windows-amd64.exe and hsmm-windows-amd64-web.exe
+# Optionally, add the directory to your PATH or move them to a directory in PATH
+```
+
+#### Option 2: Build from Source
+```bash
+git clone https://github.com/optikaaal/hsmm
+cd hsmm
 cargo build --release
+
+# Linux/macOS
 sudo cp target/release/hsmm /usr/local/bin/
+sudo cp target/release/hsmm-web /usr/local/bin/
+
+# Windows (PowerShell)
+# Copy target\release\hsmm.exe and target\release\hsmm-web.exe to desired location
 ```
 
-**Option 3: Docker**
+#### Option 3: Docker
 ```bash
 docker-compose up -d
 ```
