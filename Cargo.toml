@@ -63,6 +63,7 @@ tower = "0.4"
 tower-http = { version = "0.5", features = ["fs", "cors", "trace"] }
 mime_guess = "2.0"
 urlencoding = "2.1"
+tokio-util = { version = "0.7.18", features = ["io"] }
 
 [dev-dependencies]
 tempfile = "3.0"

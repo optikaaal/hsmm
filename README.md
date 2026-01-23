@@ -172,6 +172,15 @@ The Web UI provides a complete management interface for your Hytale server mods.
  
 <img width="1783" height="1063" alt="image" src="https://github.com/user-attachments/assets/bcd87300-af3e-4205-8e3b-40af642bf283" />
 
+- **Backup Manager** - Manage server backups
+  - View all server backups with size and timestamps
+  - Download backups to your local machine
+  - Delete old backups to free up disk space
+  - Support for archived backups
+  - Restore functionality (coming soon)
+
+<!-- Screenshot placeholder - add your screenshot here -->
+
 - **Log Viewer** - Monitor server activity
   - Server logs (latest.log)
   - Mod manager logs (mod-manager.log)

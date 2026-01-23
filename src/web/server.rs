@@ -85,6 +85,15 @@ impl WebServer {
             .route("/logs/hsmm", get(super::api::logs::get_hsmm_logs))
             .route("/logs/server", get(super::api::logs::get_server_logs))
             .route("/logs/webui", get(super::api::logs::get_webui_logs))
+            .route("/backups", get(super::api::backups::list_backups))
+            .route(
+                "/backups/:filename",
+                get(super::api::backups::download_backup),
+            )
+            .route(
+                "/backups/:filename",
+                axum::routing::delete(super::api::backups::delete_backup),
+            )
             .with_state(super::api::AppState {
                 config_path: self.config_path,
                 mods_dir: self.mods_dir,

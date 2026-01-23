@@ -5,8 +5,9 @@ import InstalledMods from './components/InstalledMods';
 import ConfigEditor from './components/ConfigEditor';
 import ServerControl from './components/ServerControl';
 import LogViewer from './components/LogViewer';
+import Backups from './components/Backups';
 
-type Tab = 'browse' | 'installed' | 'config' | 'server' | 'logs';
+type Tab = 'browse' | 'installed' | 'config' | 'server' | 'backups' | 'logs';
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('browse');
@@ -16,6 +17,7 @@ function App() {
     { id: 'installed' as Tab, label: 'Installed Mods', icon: '📦', description: 'Manage your mods' },
     { id: 'config' as Tab, label: 'Configuration', icon: '⚙️', description: 'Edit server config' },
     { id: 'server' as Tab, label: 'Server Control', icon: '🎮', description: 'Control server' },
+    { id: 'backups' as Tab, label: 'Backups', icon: '💾', description: 'Manage backups' },
     { id: 'logs' as Tab, label: 'Logs', icon: '📋', description: 'View server logs' },
   ];
 
@@ -87,6 +89,7 @@ function App() {
           {activeTab === 'installed' && <InstalledMods />}
           {activeTab === 'config' && <ConfigEditor />}
           {activeTab === 'server' && <ServerControl />}
+          {activeTab === 'backups' && <Backups />}
           {activeTab === 'logs' && <LogViewer />}
         </div>
       </main>

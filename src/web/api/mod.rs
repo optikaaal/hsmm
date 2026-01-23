@@ -1,3 +1,4 @@
+pub mod backups;
 pub mod config;
 pub mod curseforge;
 pub mod health;
