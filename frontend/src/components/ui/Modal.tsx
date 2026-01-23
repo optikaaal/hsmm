@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export default function Modal({
   showCloseButton = true
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -25,13 +27,34 @@ export default function Modal({
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll and lock scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
+
+      document.addEventListener('keydown', handleEscape);
+
+      // Focus trap - focus on modal when opened
+      if (overlayRef.current) {
+        overlayRef.current.focus();
+      }
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+
+      // Restore body scroll and position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
     };
   }, [isOpen, onClose]);
 
@@ -44,9 +67,28 @@ export default function Modal({
     xl: 'max-w-6xl',
   };
 
-  return (
+  // Get the modal root element
+  const modalRoot = document.getElementById('modal-root');
+
+  if (!modalRoot) {
+    console.error('Modal root element not found');
+    return null;
+  }
+
+  // Create the modal content
+  const modalContent = (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+      ref={overlayRef}
+      tabIndex={-1}
+      className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-20 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflow: 'auto',
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -58,16 +100,23 @@ export default function Modal({
           bg-gradient-to-br from-stone-900 to-stone-800
           border-2 border-adventure-600/40 rounded-2xl shadow-2xl shadow-adventure-900/30
           animate-in zoom-in-95 duration-200
-          max-h-[90vh] flex flex-col
+          mb-8
+          flex flex-col
+          max-h-[90vh]
         `}
+        style={{
+          maxHeight: '90vh',
+          position: 'relative',
+        }}
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-adventure-600/30 bg-gradient-to-r from-stone-800/50 to-stone-900/50 flex-shrink-0">
+        {/* Header - Fixed */}
+        <div className="flex items-center justify-between p-6 border-b border-adventure-600/30 bg-gradient-to-r from-stone-800/50 to-stone-900/50 flex-shrink-0 rounded-t-2xl">
           <h2 className="text-2xl font-bold text-white">{title}</h2>
           {showCloseButton && (
             <button
               onClick={onClose}
-              className="text-adventure-300 hover:text-white transition-all duration-200 p-2 rounded-lg hover:bg-adventure-900/30 hover:scale-110"
+              className="text-adventure-300 hover:text-white transition-all duration-200 p-2 rounded-lg hover:bg-adventure-900/30 hover:scale-110 flex-shrink-0"
               aria-label="Close modal"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -78,10 +127,13 @@ export default function Modal({
         </div>
 
         {/* Content - Scrollable */}
-        <div className="p-6 overflow-y-auto flex-1">
+        <div className="p-6 overflow-y-auto flex-1 overscroll-contain">
           {children}
         </div>
       </div>
     </div>
   );
+
+  // Use React Portal to render modal at document body level
+  return createPortal(modalContent, modalRoot);
 }
