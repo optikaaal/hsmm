@@ -250,7 +250,7 @@ The Web UI provides a complete management interface for your Hytale server mods.
   - Support for archived backups
   - Restore functionality (coming soon)
 
-<!-- Screenshot placeholder - add your screenshot here -->
+<img width="1775" height="1063" alt="image" src="https://github.com/user-attachments/assets/9dc10437-d703-434e-be27-9e303b94b2a8" />
 
 - **Log Viewer** - Monitor server activity
   - Server logs (latest.log)
